@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: (process.env.CLIENT_URL || "http://localhost:3000").split(',').map(o => o.trim()),
   credentials: true // optional: if using cookies
 }));
 
@@ -19,7 +19,6 @@ const postRoutes = require('./routes/postRoutes');
 const activityPubRoutes = require('./routes/activityPubRoutes');
 const feedRoutes = require("./routes/feedRoutes");
 const followRoutes = require("./routes/followRoutes");
-const auth=require("./routes/auth");
 const commentRoutes = require('./routes/comments');
 
 
@@ -30,8 +29,10 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
-
-
+// Health check endpoint for testing (Issue #13)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 app.use("/replies", replyRoutes);
 app.use('/api/posts', commentRoutes);
@@ -46,7 +47,7 @@ app.use("/api", feedRoutes);
 app.use("/.well-known", activityPubRoutes); // Webfinger
 
 app.use("/users", activityPubRoutes);
-app.use("/api/auth", auth);
+// Issue #9: Removed duplicate auth route mount (was: app.use("/api/auth", auth))
 // Error handler
 app.use((err, req, res, next) => {
   console.error("Server error:", err);
