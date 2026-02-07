@@ -21,3 +21,6 @@ uploads/
 
 # Security - exclude generated keys
 *.pem
+
+# Test coverage
+coverage/

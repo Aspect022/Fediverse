@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors({
-  origin: (process.env.CLIENT_URL || "http://localhost:3000").split(',').map(o => o.trim()),
+  origin: (process.env.CLIENT_URL || "http://localhost:3000").split(',').map(o => o.trim()).filter(Boolean),
   credentials: true // optional: if using cookies
 }));
 
